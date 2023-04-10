@@ -1,6 +1,10 @@
 package domain
 
-import "github.com/uptrace/bun"
+import (
+	"context"
+
+	"github.com/uptrace/bun"
+)
 
 type Game struct {
 	bun.BaseModel `bun:"games,alias:g"`
@@ -9,4 +13,6 @@ type Game struct {
 	Name string `json:"name" bun:"name,notnull"`
 }
 
-type GameService interface{}
+type GameService interface {
+	List(ctx context.Context) ([]Game, error)
+}

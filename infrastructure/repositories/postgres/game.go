@@ -1,6 +1,8 @@
 package postgres
 
 import (
+	"context"
+
 	"github.com/uptrace/bun"
 	"soundofgothic.pl/backend/domain"
 )
@@ -19,4 +21,9 @@ func NewGameRepository(db *bun.DB) *GameRepository {
 
 func (g *postgresRepositoryStorage) Game() domain.GameService {
 	return &GameRepository{}
+}
+
+func (gc *GameRepository) List(ctx context.Context) ([]domain.Game, error) {
+	games, _, err := gc.commonRepository.List(ctx)
+	return games, err
 }

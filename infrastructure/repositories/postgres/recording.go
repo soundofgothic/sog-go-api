@@ -5,6 +5,7 @@ import (
 
 	"github.com/uptrace/bun"
 	"soundofgothic.pl/backend/domain"
+	"soundofgothic.pl/backend/infrastructure/repositories/postgres/mods"
 )
 
 type RecordingRepository struct {
@@ -23,10 +24,9 @@ func (g *postgresRepositoryStorage) Recording() domain.RecordingService {
 	return NewRecordingRepository(g.db)
 }
 
-func (rc *RecordingRepository) SearchByText(ctx context.Context, query string, page int64, pageSize int64) ([]domain.Recording, int64, error) {
+func (rc *RecordingRepository) List(ctx context.Context, opts domain.RecordingSearchOptions) ([]domain.Recording, int64, error) {
 	return rc.commonRepository.List(ctx,
-		WithTextSearch("transcript", query),
-		WithRelations("Game", "NPC", "Guild", "Voice"),
-		WithPaging(page, pageSize),
+		mods.WithRelations("Game", "NPC", "Guild", "Voice", "SourceFile"),
+		mods.WithSearchOptions(opts),
 	)
 }

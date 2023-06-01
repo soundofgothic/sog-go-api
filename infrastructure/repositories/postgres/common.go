@@ -2,8 +2,10 @@ package postgres
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/enhanced-tools/errors"
+	"github.com/enhanced-tools/errors/opts"
 	"github.com/uptrace/bun"
 	"soundofgothic.pl/backend/infrastructure/repositories/postgres/mods"
 )
@@ -27,4 +29,31 @@ func (c *commonRepository[T]) List(ctx context.Context, modifiers ...mods.QueryM
 	}
 	count, err := baseQuery.ScanAndCount(ctx, &results)
 	return results, int64(count), errors.Enhance(err)
+}
+
+var (
+	ErrMultipipleResults = errors.Template().With(
+		opts.Title("Multiple results"),
+		opts.StatusCode(http.StatusInternalServerError),
+		opts.Type("db"),
+	)
+	ErrResultNotFound = errors.Template().With(
+		opts.Title("Result not found"),
+		opts.StatusCode(http.StatusNotFound),
+		opts.Type("db"),
+	)
+)
+
+func (c *commonRepository[T]) Get(ctx context.Context, modifiers ...mods.QueryModifier) (*T, error) {
+	results, _, err := c.List(ctx, modifiers...)
+	if err != nil {
+		return nil, err
+	}
+	if len(results) > 1 {
+		return nil, ErrMultipipleResults.FromEmpty()
+	}
+	if len(results) == 0 {
+		return nil, ErrResultNotFound.FromEmpty()
+	}
+	return &results[0], nil
 }

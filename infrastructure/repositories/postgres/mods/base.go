@@ -2,6 +2,7 @@ package mods
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/uptrace/bun"
 )
@@ -16,7 +17,7 @@ func WithPaging(page int64, pageSize int64) QueryModifier {
 
 func WithTextSearch(column string, query string) QueryModifier {
 	return func(q *bun.SelectQuery) *bun.SelectQuery {
-		return q.Where(fmt.Sprintf("%s LIKE ?", column), fmt.Sprintf("%%%s%%", query))
+		return q.Where(fmt.Sprintf("LOWER(%s) LIKE ?", column), fmt.Sprintf("%%%s%%", strings.ToLower(query)))
 	}
 }
 
@@ -32,6 +33,12 @@ func WithRelations(relations ...string) QueryModifier {
 func WithExactMatch(column string, value any) QueryModifier {
 	return func(q *bun.SelectQuery) *bun.SelectQuery {
 		return q.Where(fmt.Sprintf("%s = ?", column), value)
+	}
+}
+
+func WithIn(column string, values any) QueryModifier {
+	return func(q *bun.SelectQuery) *bun.SelectQuery {
+		return q.Where(fmt.Sprintf("%s IN (?)", column), bun.In(values))
 	}
 }
 

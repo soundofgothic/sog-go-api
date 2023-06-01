@@ -2,7 +2,6 @@ package rest
 
 import (
 	"github.com/enhanced-tools/errors"
-	"github.com/ggicci/httpin"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"soundofgothic.pl/backend/domain"
@@ -26,10 +25,11 @@ func RegisterEndpoints(r *chi.Mux, repositories domain.Repositories) {
 	env := &restEnvironment{
 		repositories: repositories,
 	}
-	r.With(httpin.NewInput(RecordingListInput{})).Get("/recordings", env.recordingsList)
-	r.With(httpin.NewInput(NPCListInput{})).Get("/npcs", env.npcList)
-	r.With(httpin.NewInput(GuildListInput{})).Get("/guilds", env.guildsList)
-	r.With(httpin.NewInput(SourceFilesListInput{})).Get("/source_files", env.sourcefilesList)
+	r.With(middlewares.ValidatedInput(RecordingListInput{})).Get("/recordings", env.recordingsList)
+	r.With(middlewares.ValidatedInput(RecordingGetInput{})).Get("/recordings/{gameID}/{wave}", env.recordingsGet)
+	r.With(middlewares.ValidatedInput(NPCListInput{})).Get("/npcs", env.npcList)
+	r.With(middlewares.ValidatedInput(GuildListInput{})).Get("/guilds", env.guildsList)
+	r.With(middlewares.ValidatedInput(SourceFilesListInput{})).Get("/source_files", env.sourcefilesList)
 	r.Get("/games", env.gamesList)
 	r.Get("/voices", env.voicesList)
 }

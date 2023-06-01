@@ -9,8 +9,8 @@ import (
 )
 
 type NPCListInput struct {
-	Page     int64  `in:"query=page;default=1"`
-	PageSize int64  `in:"query=pageSize;default=50"`
+	Page     int64  `in:"query=page;default=1" validate:"min=1"`
+	PageSize int64  `in:"query=pageSize;default=50" validate:"min=10,max=100"`
 	Filter   string `in:"query=filter"`
 	GameID   int64  `in:"query=gameID"`
 	VoiceID  int64  `in:"query=voiceID"`

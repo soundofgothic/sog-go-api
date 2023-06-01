@@ -26,16 +26,22 @@ type Recording struct {
 }
 
 type RecordingSearchOptions struct {
-	Query        string `search:"type:like;columns:transcript;"`
-	Page         int64  `search:"type:page;"`
-	PageSize     int64  `search:"type:pageSize;"`
-	GameID       int64  `search:"type:exact;columns:game_id;"`
-	SourceFileID int64  `search:"type:exact;columns:source_file_id;"`
-	NPCID        int64  `search:"type:exact;columns:npc_id;"`
-	GuildID      int64  `search:"type:exact;columns:guild_id;"`
-	VoiceID      int64  `search:"type:exact;columns:r.voice_id;"`
+	Query        string  `search:"type:like;columns:transcript;"`
+	Page         int64   `search:"type:page;"`
+	PageSize     int64   `search:"type:pageSize;"`
+	SourceFileID int64   `search:"type:exact;columns:source_file_id;"`
+	GameIDs      []int64 `search:"type:in;columns:r.game_id;"`
+	NPCIDs       []int64 `search:"type:in;columns:r.npc_id;"`
+	GuildIDs     []int64 `search:"type:in;columns:r.guild_id;"`
+	VoiceIDs     []int64 `search:"type:in;columns:r.voice_id;"`
+}
+
+type RecordingGetOptions struct {
+	GameID int64  `search:"type:exact;columns:r.game_id;"`
+	Wave   string `search:"type:exact;columns:r.wave;"`
 }
 
 type RecordingService interface {
 	List(ctx context.Context, query RecordingSearchOptions) ([]Recording, int64, error)
+	Get(ctx context.Context, query RecordingGetOptions) (*Recording, error)
 }

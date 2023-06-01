@@ -30,3 +30,10 @@ func (rc *RecordingRepository) List(ctx context.Context, opts domain.RecordingSe
 		mods.WithSearchOptions(opts),
 	)
 }
+
+func (rc *RecordingRepository) Get(ctx context.Context, opts domain.RecordingGetOptions) (*domain.Recording, error) {
+	return rc.commonRepository.Get(ctx,
+		mods.WithRelations("Game", "NPC", "Guild", "Voice", "SourceFile"),
+		mods.WithSearchOptions(opts),
+	)
+}

@@ -63,9 +63,24 @@ func WithSearchOptions(options any) QueryModifier {
 			}
 			searchTag := searchTagFromString(searchTagString)
 			switch searchTag.Type {
+			case "in":
+				if len(searchTag.Columns) == 0 {
+					panic("in search needs columns")
+				}
+				if value.Kind() != reflect.Slice {
+					panic("in search needs a slice")
+				}
+				if len(searchTag.Columns) == 1 {
+					q.Apply(WithIn(searchTag.Columns[0], value.Interface()))
+					continue
+				}
+				panic("in search with multiple columns not implemented yet")
 			case "exact":
 				if len(searchTag.Columns) == 0 {
 					panic("exact search needs columns")
+				}
+				if value.Kind() != reflect.String && value.Kind() != reflect.Int64 {
+					panic("exact search needs a string or int64")
 				}
 				if len(searchTag.Columns) == 1 {
 					q.Apply(WithExactMatch(searchTag.Columns[0], value.Interface()))

@@ -12,7 +12,6 @@ import (
 	"github.com/uptrace/bun/dialect/pgdialect"
 
 	"github.com/uptrace/bun"
-	"github.com/uptrace/bun/extra/bundebug"
 	"soundofgothic.pl/backend/domain"
 )
 
@@ -61,10 +60,10 @@ func NewPostgresRepositories(opts ...Option) (domain.Repositories, error) {
 		pgdriver.WithInsecure(true),
 	)
 	db := bun.NewDB(sql.OpenDB(conn), pgdialect.New())
-	db.AddQueryHook(bundebug.NewQueryHook(
-		bundebug.WithVerbose(true),
-		bundebug.FromEnv("BUNDEBUG"),
-	))
+	// db.AddQueryHook(bundebug.NewQueryHook(
+	// 	bundebug.WithVerbose(true),
+	// 	bundebug.FromEnv("BUNDEBUG"),
+	// ))
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := db.PingContext(ctx); err != nil {

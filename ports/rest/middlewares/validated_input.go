@@ -2,6 +2,9 @@ package middlewares
 
 import (
 	"net/http"
+	"reflect"
+	"strconv"
+	"strings"
 
 	"github.com/enhanced-tools/errors"
 	"github.com/enhanced-tools/errors/opts"
@@ -32,6 +35,27 @@ func ValidatedInput(inputStruct any) func(http.Handler) http.Handler {
 	}
 }
 
+type IDArray struct {
+	Values []int64
+}
+
+func decodeIDArray(value string) (any, error) {
+	if value == "" {
+		return IDArray{}, nil
+	}
+	strIDs := strings.Split(value, ",")
+	ids := make([]int64, len(strIDs))
+	for i, strID := range strIDs {
+		id, err := strconv.ParseInt(strID, 10, 64)
+		if err != nil {
+			return nil, errors.Enhance(err)
+		}
+		ids[i] = id
+	}
+	return IDArray{Values: ids}, nil
+}
+
 func init() {
 	httpin.UseGochiURLParam("path", chi.URLParam)
+	httpin.RegisterTypeDecoder(reflect.TypeOf(IDArray{}), httpin.ValueTypeDecoderFunc(decodeIDArray))
 }

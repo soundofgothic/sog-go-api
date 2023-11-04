@@ -23,13 +23,15 @@ type NPC struct {
 }
 
 type NPCSearchOptions struct {
-	Query       string `search:"type:like;columns:npcs.name,npcs.in_game_alias;"`
-	Page        int64  `search:"type:page;"`
-	PageSize    int64  `search:"type:pageSize;"`
-	GameID      int64  `search:"type:exact;columns:game_id;"`
-	VoiceID     int64  `search:"type:exact;columns:voice_id;"`
-	GuildID     int64  `search:"type:exact;columns:guild_id;"`
-	InGameAlias string `search:"type:exact;columns:in_game_alias;"`
+	Query       string  `search:"type:like;columns:npcs.name,npcs.in_game_alias;"`
+	Page        int64   `search:"type:page;"`
+	PageSize    int64   `search:"type:pageSize;"`
+	GameID      []int64 `search:"type:in;columns:game_id;"`
+	VoiceID     []int64 `search:"type:in;columns:voice_id;"`
+	GuildID     []int64 `search:"type:in;columns:guild_id;"`
+	InGameAlias string  `search:"type:exact;columns:in_game_alias;"`
+
+	ScriptIDs []int64
 }
 
 type NPCService interface {

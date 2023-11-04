@@ -5,6 +5,7 @@ import (
 
 	"github.com/uptrace/bun"
 	"soundofgothic.pl/backend/domain"
+	"soundofgothic.pl/backend/infrastructure/repositories/postgres/mods"
 )
 
 type VoiceRepository struct {
@@ -23,7 +24,16 @@ func (g *postgresRepositoryStorage) Voice() domain.VoiceService {
 	return NewVoiceRepository(g.db)
 }
 
-func (vc *VoiceRepository) List(ctx context.Context) ([]domain.Voice, error) {
-	result, _, err := vc.commonRepository.List(ctx)
+func (vc *VoiceRepository) List(ctx context.Context, opts domain.VoiceOptions) ([]domain.Voice, error) {
+	result, _, err := vc.commonRepository.List(ctx,
+		mods.WithRecordingsCount("v", "voice_id",
+			mods.NewMergedRestrictions(
+				mods.NewFieldRestriction(opts.ScriptIDs, "source_file_id"),
+				mods.NewFieldRestriction(opts.NPCIDs, "npc_id"),
+				mods.NewFieldRestriction(opts.GameIDs, "game_id"),
+				mods.NewFieldRestriction(opts.GuildIDs, "guild_id"),
+			),
+		),
+	)
 	return result, err
 }

@@ -20,11 +20,15 @@ type Guild struct {
 }
 
 type GuildSearchOptions struct {
-	Query       string `search:"type:like;columns:guilds.name,guilds.in_game_alias;"`
-	Page        int64  `search:"type:page;"`
-	PageSize    int64  `search:"type:pageSize;"`
-	GameID      int64  `search:"type:exact;columns:game_id;"`
-	InGameAlias string `search:"type:exact;columns:in_game_alias;"`
+	Query       string  `search:"type:like;columns:guilds.name,guilds.in_game_alias;"`
+	Page        int64   `search:"type:page;"`
+	PageSize    int64   `search:"type:pageSize;"`
+	GameIDs     []int64 `search:"type:in;columns:game_id;"`
+	InGameAlias string  `search:"type:exact;columns:in_game_alias;"`
+
+	VoiceIDs  []int64
+	ScriptIDs []int64
+	NPCIDs    []int64
 }
 
 type GuildService interface {

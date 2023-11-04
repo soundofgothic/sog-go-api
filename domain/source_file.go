@@ -24,6 +24,10 @@ type SourceFileSearchOptions struct {
 	PageSize int64  `search:"type:pageSize;"`
 	GameID   int64  `search:"type:exact;columns:game_id;"`
 	Type     string `search:"type:exact;columns:type;"`
+
+	GuildIDs []int64
+	NPCIDs   []int64
+	VoiceIDs []int64
 }
 
 type SourceFileService interface {

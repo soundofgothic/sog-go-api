@@ -30,6 +30,6 @@ func RegisterEndpoints(r *chi.Mux, repositories domain.Repositories) {
 	r.With(middlewares.ValidatedInput(NPCListInput{})).Get("/npcs", env.npcList)
 	r.With(middlewares.ValidatedInput(GuildListInput{})).Get("/guilds", env.guildsList)
 	r.With(middlewares.ValidatedInput(SourceFilesListInput{})).Get("/source_files", env.sourcefilesList)
+	r.With(middlewares.ValidatedInput(VoicesListInput{})).Get("/voices", env.voicesList)
 	r.Get("/games", env.gamesList)
-	r.Get("/voices", env.voicesList)
 }

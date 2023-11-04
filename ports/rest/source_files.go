@@ -14,6 +14,10 @@ type SourceFilesListInput struct {
 	Page     int64  `in:"query=page;default=1" validate:"min=1"`
 	PageSize int64  `in:"query=pageSize;default=50" validate:"min=10,max=100"`
 	Type     string `in:"query=type"`
+
+	NPCIDs   []int64 `in:"query=npcID,npcID[]"`
+	GuildIDs []int64 `in:"query=guildID,guildID[]"`
+	VoiceIDs []int64 `in:"query=voiceID,voiceID[]"`
 }
 
 func (rc *restEnvironment) sourcefilesList(w http.ResponseWriter, r *http.Request) {

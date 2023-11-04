@@ -26,7 +26,13 @@ func (g *postgresRepositoryStorage) Guild() domain.GuildService {
 
 func (gc *GuildRepository) List(ctx context.Context, options domain.GuildSearchOptions) ([]domain.Guild, int64, error) {
 	return gc.commonRepository.List(ctx,
-		mods.WithRecordingsCount("g", "guild_id"),
+		mods.WithRecordingsCount("guilds", "guild_id",
+			mods.NewMergedRestrictions(
+				mods.NewFieldRestriction(options.VoiceIDs, "voice_id"),
+				mods.NewFieldRestriction(options.ScriptIDs, "source_file_id"),
+				mods.NewFieldRestriction(options.NPCIDs, "npc_id"),
+			),
+		),
 		mods.WithSearchOptions(options),
 	)
 }

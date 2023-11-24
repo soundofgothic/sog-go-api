@@ -86,7 +86,6 @@ func WithRecordingsCount(table, column string, countRestriction ...CountRestrict
 
 		return q.Join(fmt.Sprintf("LEFT JOIN (SELECT r.%s, count(1) cnt FROM recordings r %s GROUP BY r.%s) AS rc ON %s.id = rc.%s", column, restructionQuery, column, table, column), args...).
 			Where("rc.cnt > 0").
-			Order("rc.cnt DESC").
 			ColumnExpr(fmt.Sprintf("%s.*, rc.cnt as count", table))
 	}
 }

@@ -15,6 +15,9 @@ type Voice struct {
 }
 
 type VoiceOptions struct {
+	Query string `search:"type:like;columns:v.name;"`
+
+	IDs       []int64
 	GuildIDs  []int64
 	NPCIDs    []int64
 	ScriptIDs []int64

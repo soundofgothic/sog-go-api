@@ -5,6 +5,7 @@ import (
 
 	"github.com/ggicci/httpin"
 	"soundofgothic.pl/backend/domain"
+	"soundofgothic.pl/backend/ports/rest/middlewares"
 	"soundofgothic.pl/backend/ports/rest/rjson"
 )
 
@@ -15,9 +16,10 @@ type SourceFilesListInput struct {
 	PageSize int64  `in:"query=pageSize;default=50" validate:"min=10,max=100"`
 	Type     string `in:"query=type"`
 
-	NPCIDs   []int64 `in:"query=npcID,npcID[]"`
-	GuildIDs []int64 `in:"query=guildID,guildID[]"`
-	VoiceIDs []int64 `in:"query=voiceID,voiceID[]"`
+	NPCIDs   middlewares.IDArray `in:"query=npcID,npcID[]"`
+	GuildIDs middlewares.IDArray `in:"query=guildID,guildID[]"`
+	VoiceIDs middlewares.IDArray `in:"query=voiceID,voiceID[]"`
+	IDs      middlewares.IDArray `in:"query=id,id[]"`
 }
 
 func (rc *restEnvironment) sourcefilesList(w http.ResponseWriter, r *http.Request) {
@@ -28,6 +30,11 @@ func (rc *restEnvironment) sourcefilesList(w http.ResponseWriter, r *http.Reques
 		Page:     input.Page,
 		PageSize: input.PageSize,
 		Type:     input.Type,
+
+		GuildIDs: input.GuildIDs.Values,
+		NPCIDs:   input.NPCIDs.Values,
+		VoiceIDs: input.VoiceIDs.Values,
+		IDs:      input.IDs.Values,
 	})
 	if err != nil {
 		rjson.HandleError(w, err)

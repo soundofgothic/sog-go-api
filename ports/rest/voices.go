@@ -5,23 +5,27 @@ import (
 
 	"github.com/ggicci/httpin"
 	"soundofgothic.pl/backend/domain"
+	"soundofgothic.pl/backend/ports/rest/middlewares"
 	"soundofgothic.pl/backend/ports/rest/rjson"
 )
 
 type VoicesListInput struct {
-	GameIDs   []int64 `in:"query=gameID,gameID[]"`
-	NPCIDs    []int64 `in:"query=npcID,npcID[]"`
-	GuildIDs  []int64 `in:"query=guildID,guildID[]"`
-	ScriptIDs []int64 `in:"query=scriptID,scriptID[]"`
+	Filter    string              `in:"query=filter"`
+	GameIDs   middlewares.IDArray `in:"query=gameID,gameID[]"`
+	NPCIDs    middlewares.IDArray `in:"query=npcID,npcID[]"`
+	GuildIDs  middlewares.IDArray `in:"query=guildID,guildID[]"`
+	ScriptIDs middlewares.IDArray `in:"query=scriptID,scriptID[]"`
+	IDs       middlewares.IDArray `in:"query=id,id[]"`
 }
 
 func (re *restEnvironment) voicesList(w http.ResponseWriter, r *http.Request) {
 	input := r.Context().Value(httpin.Input).(*VoicesListInput)
 	voices, err := re.repositories.Voice().List(r.Context(), domain.VoiceOptions{
-		GuildIDs:  input.GuildIDs,
-		NPCIDs:    input.NPCIDs,
-		GameIDs:   input.GameIDs,
-		ScriptIDs: input.ScriptIDs,
+		Query:     input.Filter,
+		GuildIDs:  input.GuildIDs.Values,
+		NPCIDs:    input.NPCIDs.Values,
+		GameIDs:   input.GameIDs.Values,
+		ScriptIDs: input.ScriptIDs.Values,
 	})
 	if err != nil {
 		rjson.HandleError(w, err)

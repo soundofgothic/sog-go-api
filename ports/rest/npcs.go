@@ -16,11 +16,13 @@ type NPCListInput struct {
 	GameID   middlewares.IDArray `in:"query=gameID,gameID[]"`
 	VoiceID  middlewares.IDArray `in:"query=voiceID,voiceID[]"`
 	GuildID  middlewares.IDArray `in:"query=guildID,guildID[]"`
+	IDs      middlewares.IDArray `in:"query=id,id[]"`
 }
 
 func (re *restEnvironment) npcList(w http.ResponseWriter, r *http.Request) {
 	input := r.Context().Value(httpin.Input).(*NPCListInput)
 	npcs, count, err := re.repositories.NPC().List(r.Context(), domain.NPCSearchOptions{
+		IDs:      input.IDs.Values,
 		Query:    input.Filter,
 		Page:     input.Page,
 		PageSize: input.PageSize,

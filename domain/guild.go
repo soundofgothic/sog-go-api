@@ -20,6 +20,7 @@ type Guild struct {
 }
 
 type GuildSearchOptions struct {
+	IDs         []int64
 	Query       string  `search:"type:like;columns:guilds.name,guilds.in_game_alias;"`
 	Page        int64   `search:"type:page;"`
 	PageSize    int64   `search:"type:pageSize;"`

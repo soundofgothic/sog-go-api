@@ -7,17 +7,19 @@ import (
 
 	"github.com/enhanced-tools/errors"
 	"github.com/go-chi/chi/v5"
+	"soundofgothic.pl/backend/infrastructure/config"
 	"soundofgothic.pl/backend/infrastructure/repositories/postgres"
 	"soundofgothic.pl/backend/ports/rest"
 )
 
 func run() int {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	cfg, err := LoadConfig()
+	cfg, err := config.LoadConfig()
 	if err != nil {
 		errors.Enhance(err).Log()
 		return 1
 	}
+
 	errors.Manager().SetDefaultLogger(errors.CustomLogger(
 		errors.WithErrorFormatter(errors.MultilineFormatter),
 		errors.WithSaveStack(true),
@@ -26,7 +28,7 @@ func run() int {
 	r := chi.NewRouter()
 	repositories, err := postgres.NewPostgresRepositories(postgres.WithAuth(
 		postgres.DBAuth{
-			Address:  cfg.Postgres.Host,
+			Host:     cfg.Postgres.Host,
 			Port:     cfg.Postgres.Port,
 			Username: cfg.Postgres.User,
 			Password: cfg.Postgres.Password,

@@ -36,7 +36,13 @@ func WithExactMatch(column string, value any) QueryModifier {
 	}
 }
 
-func WithIn(column string, values any) QueryModifier {
+func WithIn(column string, values []int64) QueryModifier {
+	if len(values) == 0 {
+		return func(q *bun.SelectQuery) *bun.SelectQuery {
+			return q
+		}
+	}
+
 	return func(q *bun.SelectQuery) *bun.SelectQuery {
 		return q.Where(fmt.Sprintf("%s IN (?)", column), bun.In(values))
 	}
@@ -62,6 +68,43 @@ func WithOrLikes(matches map[string]any) QueryModifier {
 				} else {
 					q.WhereOr(fmt.Sprintf("%s LIKE ?", column), fmt.Sprintf("%%%s%%", value))
 				}
+			}
+			return q
+		})
+	}
+}
+
+func WithOrderByIDsIn(idColumnName string, ids []int64) QueryModifier {
+	return func(q *bun.SelectQuery) *bun.SelectQuery {
+		if len(ids) == 0 {
+			return q
+		}
+
+		return q.OrderExpr(fmt.Sprintf("%s IN (?) DESC", idColumnName), bun.In(ids))
+	}
+}
+
+func WithOrderByIDsAndCount(idColumnName string, ids []int64) QueryModifier {
+	return func(q *bun.SelectQuery) *bun.SelectQuery {
+		if len(ids) == 0 {
+			return WithOrderByCount()(q)
+		}
+
+		return q.OrderExpr(fmt.Sprintf("%s IN (?) DESC, rc.cnt DESC", idColumnName), bun.In(ids))
+	}
+}
+
+func WithOrderByCount() QueryModifier {
+	return func(q *bun.SelectQuery) *bun.SelectQuery {
+		return q.Order("rc.cnt DESC")
+	}
+}
+
+func WithWhereGroup(concatenator string, modifiers ...QueryModifier) QueryModifier {
+	return func(q *bun.SelectQuery) *bun.SelectQuery {
+		return q.WhereGroup(concatenator, func(q *bun.SelectQuery) *bun.SelectQuery {
+			for _, modifier := range modifiers {
+				modifier(q)
 			}
 			return q
 		})

@@ -24,7 +24,7 @@ type options struct {
 }
 
 type DBAuth struct {
-	Address  string
+	Host     string
 	Port     int
 	Name     string
 	Username string
@@ -42,7 +42,7 @@ func WithAuth(auth DBAuth) Option {
 func NewPostgresRepositories(opts ...Option) (domain.Repositories, error) {
 	options := options{
 		auth: DBAuth{
-			Address:  "localhost",
+			Host:     "localhost",
 			Port:     5432,
 			Name:     "postgres",
 			Username: "postgres",
@@ -52,23 +52,34 @@ func NewPostgresRepositories(opts ...Option) (domain.Repositories, error) {
 	for _, opt := range opts {
 		opt(&options)
 	}
+
 	conn := pgdriver.NewConnector(
-		pgdriver.WithAddr(fmt.Sprintf("%s:%d", options.auth.Address, options.auth.Port)),
+		pgdriver.WithAddr(fmt.Sprintf("%s:%d", options.auth.Host, options.auth.Port)),
 		pgdriver.WithUser(options.auth.Username),
 		pgdriver.WithPassword(options.auth.Password),
 		pgdriver.WithDatabase(options.auth.Name),
 		pgdriver.WithInsecure(true),
 	)
 	db := bun.NewDB(sql.OpenDB(conn), pgdialect.New())
-	// db.AddQueryHook(bundebug.NewQueryHook(
-	// 	bundebug.WithVerbose(true),
-	// 	bundebug.FromEnv("BUNDEBUG"),
-	// ))
+
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
 	if err := db.PingContext(ctx); err != nil {
-		return nil, errors.Enhance(err)
+	PINGLOOP:
+		for err != nil {
+			select {
+			case <-ctx.Done():
+				return nil, errors.Enhance(err)
+			default:
+				time.Sleep(1 * time.Second)
+				if err = db.PingContext(ctx); err == nil {
+					break PINGLOOP
+				}
+			}
+		}
 	}
+
 	return &postgresRepositoryStorage{
 		db: db,
 	}, nil

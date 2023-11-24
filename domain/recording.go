@@ -26,10 +26,11 @@ type Recording struct {
 }
 
 type RecordingSearchOptions struct {
+	IDs          []int64 `search:"type:in;columns:r.id;"`
 	Query        string  `search:"type:like;columns:transcript;"`
 	Page         int64   `search:"type:page;"`
 	PageSize     int64   `search:"type:pageSize;"`
-	SourceFileID int64   `search:"type:exact;columns:source_file_id;"`
+	SourceFileID []int64 `search:"type:in;columns:r.source_file_id;"`
 	GameIDs      []int64 `search:"type:in;columns:r.game_id;"`
 	NPCIDs       []int64 `search:"type:in;columns:r.npc_id;"`
 	GuildIDs     []int64 `search:"type:in;columns:r.guild_id;"`

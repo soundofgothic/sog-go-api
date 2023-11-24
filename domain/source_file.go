@@ -19,7 +19,8 @@ type SourceFile struct {
 }
 
 type SourceFileSearchOptions struct {
-	Query    string `search:"type:like;columns:source_files.name;"`
+	IDs      []int64
+	Query    string `search:"type:like;columns:sfs.name;"`
 	Page     int64  `search:"type:page;"`
 	PageSize int64  `search:"type:pageSize;"`
 	GameID   int64  `search:"type:exact;columns:game_id;"`

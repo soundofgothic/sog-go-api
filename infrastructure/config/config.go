@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"github.com/enhanced-tools/errors"
@@ -6,16 +6,16 @@ import (
 )
 
 type Config struct {
-	Address  string   `yaml:"address"`
-	Postgres Postgres `yaml:"postgres"`
+	Address  string   `mapstructure:"address"`
+	Postgres Postgres `mapstructure:"db"`
 }
 
 type Postgres struct {
-	Host     string `yaml:"host"`
-	Port     int    `yaml:"port"`
-	User     string `yaml:"user"`
-	Password string `yaml:"password"`
-	Database string `yaml:"database"`
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	User     string `mapstructure:"user"`
+	Password string `mapstructure:"password"`
+	Database string `mapstructure:"database"`
 }
 
 func validatePostgres(p *Postgres) error {
@@ -37,25 +37,17 @@ func validatePostgres(p *Postgres) error {
 	return nil
 }
 
-func setDefaults() {
-	viper.SetDefault("address", ":3000")
-	viper.SetDefault("postgres.host", "localhost")
-	viper.SetDefault("postgres.port", 5432)
-	viper.SetDefault("postgres.user", "postgres")
-	viper.SetDefault("postgres.password", "postgres")
-	viper.SetDefault("postgres.database", "postgres")
-}
-
 func ValidateConfig(cfg *Config) error {
 	return validatePostgres(&cfg.Postgres)
 }
 
 func LoadConfig() (*Config, error) {
 	cfg := &Config{}
-	setDefaults()
 	viper.SetConfigType("yaml")
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
+	viper.AddConfigPath("/app/")
+	viper.AddConfigPath("../../")
 	if err := viper.ReadInConfig(); err != nil {
 		return nil, errors.Enhance(err)
 	}

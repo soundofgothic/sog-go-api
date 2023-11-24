@@ -71,7 +71,11 @@ func WithSearchOptions(options any) QueryModifier {
 					panic("in search needs a slice")
 				}
 				if len(searchTag.Columns) == 1 {
-					q.Apply(WithIn(searchTag.Columns[0], value.Interface()))
+					v, ok := value.Interface().([]int64)
+					if !ok {
+						panic("in search needs a slice of int64")
+					}
+					q.Apply(WithIn(searchTag.Columns[0], v))
 					continue
 				}
 				panic("in search with multiple columns not implemented yet")

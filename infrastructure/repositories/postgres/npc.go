@@ -26,9 +26,13 @@ func (g *postgresRepositoryStorage) NPC() domain.NPCService {
 
 func (nc *NPCRepository) List(ctx context.Context, options domain.NPCSearchOptions) ([]domain.NPC, int64, error) {
 	return nc.commonRepository.List(ctx,
-		mods.WithRecordingsCount("npcs", "npc_id",
-			mods.NewFieldRestriction(options.ScriptIDs, "source_file_id"),
+		mods.WithWhereGroup(" AND ",
+			mods.WithRecordingsCount("npcs", "npc_id",
+				mods.NewFieldRestriction(options.ScriptIDs, "source_file_id"),
+			),
+			mods.WithSearchOptions(options),
 		),
-		mods.WithSearchOptions(options),
+		mods.WithWhereGroup(" OR ", mods.WithIn("npcs.id", options.IDs)),
+		mods.WithOrderByIDsAndCount("npcs.id", options.IDs),
 	)
 }

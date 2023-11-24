@@ -28,6 +28,7 @@ func (rc *RecordingRepository) List(ctx context.Context, opts domain.RecordingSe
 	return rc.commonRepository.List(ctx,
 		mods.WithRelations("Game", "NPC", "Guild", "Voice", "SourceFile"),
 		mods.WithSearchOptions(opts),
+		mods.WithOrderByIDsIn("r.id", opts.IDs),
 	)
 }
 

@@ -26,11 +26,16 @@ func (g *postgresRepositoryStorage) SourceFile() domain.SourceFileService {
 
 func (sc *SourceFileRepository) List(ctx context.Context, opts domain.SourceFileSearchOptions) ([]domain.SourceFile, int64, error) {
 	return sc.commonRepository.List(ctx,
-		mods.WithRecordingsCount("sfs", "source_file_id", mods.NewMergedRestrictions(
-			mods.NewFieldRestriction(opts.GuildIDs, "guild_id"),
-			mods.NewFieldRestriction(opts.NPCIDs, "npc_id"),
-			mods.NewFieldRestriction(opts.VoiceIDs, "voice_id"),
-		)),
-		mods.WithSearchOptions(opts),
+		mods.WithWhereGroup(" AND ",
+			mods.WithRecordingsCount("sfs", "source_file_id",
+				mods.NewMergedRestrictions(
+					mods.NewFieldRestriction(opts.GuildIDs, "guild_id"),
+					mods.NewFieldRestriction(opts.NPCIDs, "npc_id"),
+					mods.NewFieldRestriction(opts.VoiceIDs, "voice_id"),
+				)),
+			mods.WithSearchOptions(opts),
+		),
+		mods.WithWhereGroup(" OR ", mods.WithIn("sfs.id", opts.IDs)),
+		mods.WithOrderByIDsAndCount("sfs.id", opts.IDs),
 	)
 }

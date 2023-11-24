@@ -18,6 +18,7 @@ type GuildListInput struct {
 	VoiceIDs    middlewares.IDArray `in:"query=voiceID,voiceID[]"`
 	ScriptIDs   middlewares.IDArray `in:"query=scriptID,scriptID[]"`
 	NPCIDs      middlewares.IDArray `in:"query=npcID,npcID[]"`
+	IDs         middlewares.IDArray `in:"query=id,id[]"`
 }
 
 func (re *restEnvironment) guildsList(w http.ResponseWriter, r *http.Request) {
@@ -31,6 +32,7 @@ func (re *restEnvironment) guildsList(w http.ResponseWriter, r *http.Request) {
 		VoiceIDs:    input.VoiceIDs.Values,
 		ScriptIDs:   input.ScriptIDs.Values,
 		NPCIDs:      input.NPCIDs.Values,
+		IDs:         input.IDs.Values,
 	})
 	if err != nil {
 		rjson.HandleError(w, err)

@@ -27,7 +27,7 @@ func ValidatedInput(inputStruct any) func(http.Handler) http.Handler {
 			input := r.Context().Value(httpin.Input)
 			if err := validate.Struct(input); err != nil {
 				errs := err.(validator.ValidationErrors)
-				rjson.HandleError(w, ErrValidationFailed.With(rjson.NewValidationError(errs)))
+				rjson.HandleError(w, ErrValidationFailed.With(rjson.NewValidationError(errs)).FromEmpty())
 				return
 			}
 			next.ServeHTTP(w, r)

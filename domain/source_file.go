@@ -23,9 +23,9 @@ type SourceFileSearchOptions struct {
 	Query    string `search:"type:like;columns:sfs.name;"`
 	Page     int64  `search:"type:page;"`
 	PageSize int64  `search:"type:pageSize;"`
-	GameID   int64  `search:"type:exact;columns:game_id;"`
 	Type     string `search:"type:exact;columns:type;"`
 
+	GameIDs  []int64
 	GuildIDs []int64
 	NPCIDs   []int64
 	VoiceIDs []int64

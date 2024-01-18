@@ -32,6 +32,7 @@ func (sc *SourceFileRepository) List(ctx context.Context, opts domain.SourceFile
 					mods.NewFieldRestriction(opts.GuildIDs, "guild_id"),
 					mods.NewFieldRestriction(opts.NPCIDs, "npc_id"),
 					mods.NewFieldRestriction(opts.VoiceIDs, "voice_id"),
+					mods.NewFieldRestriction(opts.GameIDs, "game_id"),
 				)),
 			mods.WithSearchOptions(opts),
 		),

@@ -7,6 +7,7 @@ import (
 
 	"github.com/enhanced-tools/errors"
 	"github.com/go-chi/chi/v5"
+
 	"soundofgothic.pl/backend/infrastructure/config"
 	"soundofgothic.pl/backend/infrastructure/repositories/postgres"
 	"soundofgothic.pl/backend/ports/rest"

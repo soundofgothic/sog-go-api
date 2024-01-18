@@ -1,19 +1,7 @@
 version: '3.9'
 services:
   db:
-    image: soundofgothic/db:2.0
+    image: soundofgothic/db:2.1
     command: ["postgres", "-c", "log_statement=all"]
     ports:
       - 5432:5432
-
-  sog:
-    image: soundofgothic/backend:latest
-    ports:
-      - 3000:3000
-    environment:
-      - ADDRESS=:3000
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - DB_NAME=postgres

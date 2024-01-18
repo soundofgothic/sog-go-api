@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/uptrace/bun"
+
 	"soundofgothic.pl/backend/domain"
 	"soundofgothic.pl/backend/infrastructure/repositories/postgres/mods"
 )
@@ -24,7 +25,10 @@ func (g *postgresRepositoryStorage) Guild() domain.GuildService {
 	return NewGuildRepository(g.db)
 }
 
-func (gc *GuildRepository) List(ctx context.Context, options domain.GuildSearchOptions) ([]domain.Guild, int64, error) {
+func (gc *GuildRepository) List(
+	ctx context.Context,
+	options domain.GuildSearchOptions,
+) ([]domain.Guild, int64, error) {
 	return gc.commonRepository.List(ctx,
 		mods.WithWhereGroup(" AND ",
 			mods.WithRecordingsCount("guilds", "guild_id",

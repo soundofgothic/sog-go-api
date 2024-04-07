@@ -20,7 +20,7 @@ jobs:
           version: v1.54
 
   build-and-push:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || contains(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
         - id: commit

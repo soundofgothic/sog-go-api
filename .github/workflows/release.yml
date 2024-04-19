@@ -17,7 +17,7 @@ jobs:
         - name: 'Get next tag'
           id: getnexttag
           run:
-            echo NEXT_TAG=$(git tag --sort=taggerdate | tail -1 | awk -F. '{print $1"."$2"."($3+1)}') >> $GITHUB_ENV
+            echo nextTag=$(git tag --sort=taggerdate | tail -1 | awk -F. '{print $1"."$2"."($3+1)}') >> $GITHUB_OUTPUT
         - id: commit
           uses: prompt/actions-commit-hash@v3
         - name: Set up QEMU
@@ -36,11 +36,11 @@ jobs:
             file: docker/Dockerfile
             platforms: linux/amd64,linux/arm64
             push: true
-            tags: soundofgothic/api:$NEXT_TAG
+            tags: soundofgothic/api:${{ steps.getnexttag.outputs.nextTag }}
         - name: 'Push tag'
           run: |
             git config --global user.name 'GitHub Actions'
             git config --global user.email 'github-actions@github.com'
-            git tag $NEXT_TAG
-            git push origin $NEXT_TAG
+            git tag ${{ steps.getnexttag.outputs.nextTag }}
+            git push origin ${{ steps.getnexttag.outputs.nextTag }}
               

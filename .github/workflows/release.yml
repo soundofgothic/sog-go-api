@@ -1,17 +1,25 @@
-name: learn-github-actions
+name: Release
 run-name: ${{ github.repository }} image release
 on: 
-  push:
-    tags:
-      - 'v*'
+  workflow_run: 
+    workflows: ["Tests"]
+    types:
+      - completed
+    branches:
+      - 'main'
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 0 # Required due to the way Git works, without it this action won't be able to find any or the correct tags
+        - name: 'Get next tag'
+          id: getnexttag
+          run:
+            echo NEXT_TAG=$(git tag --sort=taggerdate | tail -1 | awk -F. '{print $1"."$2"."($3+1)}') >> $GITHUB_ENV
         - id: commit
           uses: prompt/actions-commit-hash@v3
-        - name: Checkout
-          uses: actions/checkout@v4
         - name: Set up QEMU
           uses: docker/setup-qemu-action@v3
         - name: Set up Docker Buildx
@@ -28,5 +36,11 @@ jobs:
             file: docker/Dockerfile
             platforms: linux/amd64,linux/arm64
             push: true
-            tags: soundofgothic/api:${{ contains(github.ref, 'refs/tags/') && github.ref_name || steps.commit.outputs.short }}
-            
+            tags: soundofgothic/api:$NEXT_TAG
+        - name: 'Push tag'
+          run: |
+            git config --global user.name 'GitHub Actions'
+            git config --global user.email 'github-actions@github.com'
+            git tag $NEXT_TAG
+            git push origin $NEXT_TAG
+              

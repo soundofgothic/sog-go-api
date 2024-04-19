@@ -1,4 +1,4 @@
-name: learn-github-actions
+name: Tests
 run-name: ${{ github.repository }} linter and tests
 on: 
   push:

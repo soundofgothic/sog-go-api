@@ -17,7 +17,7 @@ jobs:
         - name: 'Get next tag'
           id: getnexttag
           run:
-            echo nextTag=$(git tag --sort=taggerdate | tail -1 | awk -F. '{print $1"."$2"."($3+1)}') >> $GITHUB_OUTPUT
+            echo nextTag=$(git tag --sort=version:refname | tail -1 | awk -F. '{print $1"."$2"."($3+1)}') >> $GITHUB_OUTPUT
         - id: commit
           uses: prompt/actions-commit-hash@v3
         - name: Set up QEMU

@@ -11,7 +11,7 @@ import (
 	"github.com/ggicci/httpin"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
-	"soundofgothic.pl/backend/ports/rest/rjson"
+	"soundofgothic.pl/backend/internal/rest/rjson"
 )
 
 var ErrValidationFailed = errors.Template().With(

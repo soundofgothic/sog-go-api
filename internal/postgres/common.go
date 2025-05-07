@@ -7,7 +7,7 @@ import (
 	"github.com/enhanced-tools/errors"
 	"github.com/enhanced-tools/errors/opts"
 	"github.com/uptrace/bun"
-	"soundofgothic.pl/backend/infrastructure/repositories/postgres/mods"
+	"soundofgothic.pl/backend/internal/postgres/mods"
 )
 
 type Model any

@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/ggicci/httpin"
-	"soundofgothic.pl/backend/domain"
-	"soundofgothic.pl/backend/ports/rest/middlewares"
-	"soundofgothic.pl/backend/ports/rest/rjson"
+	"soundofgothic.pl/backend/internal/domain"
+	"soundofgothic.pl/backend/internal/rest/middlewares"
+	"soundofgothic.pl/backend/internal/rest/rjson"
 )
 
 type GuildListInput struct {

@@ -3,7 +3,7 @@ package rest
 import (
 	"net/http"
 
-	"soundofgothic.pl/backend/ports/rest/rjson"
+	"soundofgothic.pl/backend/internal/rest/rjson"
 )
 
 func (re *restEnvironment) gamesList(w http.ResponseWriter, r *http.Request) {

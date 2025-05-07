@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/uptrace/bun"
-	"soundofgothic.pl/backend/domain"
+	"soundofgothic.pl/backend/internal/domain"
 )
 
 type GameRepository struct {
@@ -20,7 +20,7 @@ func NewGameRepository(db *bun.DB) *GameRepository {
 }
 
 func (g *postgresRepositoryStorage) Game() domain.GameService {
-	return &GameRepository{}
+	return NewGameRepository(g.db)
 }
 
 func (gc *GameRepository) List(ctx context.Context) ([]domain.Game, error) {

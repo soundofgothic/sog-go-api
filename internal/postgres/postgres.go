@@ -12,7 +12,7 @@ import (
 	"github.com/uptrace/bun/dialect/pgdialect"
 
 	"github.com/uptrace/bun"
-	"soundofgothic.pl/backend/domain"
+	"soundofgothic.pl/backend/internal/domain"
 )
 
 type postgresRepositoryStorage struct {

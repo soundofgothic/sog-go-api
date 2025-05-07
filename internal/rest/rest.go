@@ -4,8 +4,8 @@ import (
 	"github.com/enhanced-tools/errors"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"soundofgothic.pl/backend/domain"
-	"soundofgothic.pl/backend/ports/rest/middlewares"
+	"soundofgothic.pl/backend/internal/domain"
+	"soundofgothic.pl/backend/internal/rest/middlewares"
 )
 
 type restEnvironment struct {

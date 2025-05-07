@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/uptrace/bun"
-	"soundofgothic.pl/backend/domain"
-	"soundofgothic.pl/backend/infrastructure/repositories/postgres/mods"
+	"soundofgothic.pl/backend/internal/domain"
+	"soundofgothic.pl/backend/internal/postgres/mods"
 )
 
 type VoiceRepository struct {

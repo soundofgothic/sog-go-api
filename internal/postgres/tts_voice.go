@@ -40,9 +40,9 @@ func (v *TTSVoiceRepository) List(ctx context.Context) ([]domain.TTSVoice, error
 }
 
 func (v *TTSVoiceRepository) Get(ctx context.Context, id int64) (*domain.TTSVoice, error) {
-	return v.commonRepository.FindByID(ctx, id)
+	return v.FindByID(ctx, id)
 }
 
 func (v *TTSVoiceRepository) Delete(ctx context.Context, id int64) error {
-	return v.commonRepository.Delete(ctx, id)
+	return v.Delete(ctx, id)
 }

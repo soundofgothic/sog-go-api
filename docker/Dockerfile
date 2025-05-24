@@ -1,4 +1,4 @@
-FROM golang:1.21.4-alpine3.18 AS builder
+FROM golang:1.24.3-alpine AS builder
 
 WORKDIR /app
 
@@ -8,7 +8,7 @@ RUN go mod download
 COPY . .
 RUN go build -o /app/ ./cmd/...
 
-FROM alpine:3.18
+FROM alpine:3.21
 RUN apk add --no-cache gettext
 
 COPY --from=builder /app/sog-backend /app/

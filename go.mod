@@ -1,8 +1,6 @@
 module soundofgothic.pl/backend
 
-go 1.24.1
-
-toolchain go1.24.2
+go 1.24.3
 
 require (
 	github.com/enhanced-tools/errors v0.0.0-20230203114058-3600b48c22f9

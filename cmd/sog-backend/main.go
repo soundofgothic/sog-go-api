@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 	"os"
@@ -14,8 +15,13 @@ import (
 )
 
 func run() int {
+	var configPath string
+	flag.StringVar(&configPath, "config", "", "Path to config file")
+	flag.StringVar(&configPath, "c", "", "Path to config file (shorthand)")
+	flag.Parse()
+
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	cfg, err := config.LoadConfig()
+	cfg, err := config.LoadConfigFromFile(configPath)
 	if err != nil {
 		errors.Enhance(err).Log()
 		return 1
@@ -40,7 +46,7 @@ func run() int {
 		errors.Enhance(err).Log()
 		return 1
 	}
-	rest.RegisterEndpoints(r, repositories)
+	rest.RegisterBackendEndpoints(r, repositories)
 	log.Printf("Listening on %s", cfg.Address)
 	if err := http.ListenAndServe(cfg.Address, r); err != nil {
 		errors.Enhance(err).Log()

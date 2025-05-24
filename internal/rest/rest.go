@@ -12,8 +12,8 @@ type restEnvironment struct {
 	repositories domain.Repositories
 }
 
-func RegisterEndpoints(r *chi.Mux, repositories domain.Repositories) {
-	errors.Manager().RegisterLogger("rest", errors.CustomLogger(
+func RegisterBackendEndpoints(r *chi.Mux, repositories domain.Repositories) {
+	errors.Manager().RegisterLogger("backend", errors.CustomLogger(
 		errors.WithErrorFormatter(errors.MultilineFormatter),
 		errors.WithSaveStack(true),
 		errors.WithStackTraceFormatter(errors.MultilineStackTraceFormatter),
@@ -32,4 +32,16 @@ func RegisterEndpoints(r *chi.Mux, repositories domain.Repositories) {
 	r.With(middlewares.ValidatedInput(SourceFilesListInput{})).Get("/source_files", env.sourcefilesList)
 	r.With(middlewares.ValidatedInput(VoicesListInput{})).Get("/voices", env.voicesList)
 	r.Get("/games", env.gamesList)
+}
+
+func RegisterModEndpoints(r *chi.Mux, repositories domain.Repositories) {
+	errors.Manager().RegisterLogger("mod", errors.CustomLogger(
+		errors.WithErrorFormatter(errors.MultilineFormatter),
+		errors.WithSaveStack(true),
+		errors.WithStackTraceFormatter(errors.MultilineStackTraceFormatter),
+	))
+
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Use(middlewares.CORS)
 }

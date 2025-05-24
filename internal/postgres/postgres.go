@@ -12,7 +12,6 @@ import (
 	"github.com/uptrace/bun/dialect/pgdialect"
 
 	"github.com/uptrace/bun"
-	"soundofgothic.pl/backend/internal/domain"
 )
 
 type postgresRepositoryStorage struct {
@@ -39,7 +38,7 @@ func WithAuth(auth DBAuth) Option {
 	}
 }
 
-func NewPostgresRepositories(opts ...Option) (domain.Repositories, error) {
+func NewPostgresRepositories(opts ...Option) (*postgresRepositoryStorage, error) {
 	options := options{
 		auth: DBAuth{
 			Host:     "localhost",
@@ -83,4 +82,8 @@ func NewPostgresRepositories(opts ...Option) (domain.Repositories, error) {
 	return &postgresRepositoryStorage{
 		db: db,
 	}, nil
+}
+
+func (r *postgresRepositoryStorage) DB() *bun.DB {
+	return r.db
 }

@@ -7,4 +7,8 @@ type Repositories interface {
 	SourceFile() SourceFileService
 	Recording() RecordingService
 	NPC() NPCService
+
+	Mod() ModService
+	Alternative() AlternativeService
+	TTSVoice() TTSVoiceService
 }

@@ -5,3 +5,5 @@ db:
   user: postgres
   password: postgres
   database: postgres
+mcp:
+  address: localhost:8080

@@ -42,9 +42,5 @@ func (m *ModRepository) List(ctx context.Context) ([]domain.Mod, error) {
 }
 
 func (m *ModRepository) Get(ctx context.Context, id int64) (*domain.Mod, error) {
-	return m.commonRepository.FindByID(ctx, id)
-}
-
-func (m *ModRepository) Delete(ctx context.Context, id int64) error {
-	return m.commonRepository.Delete(ctx, id)
+	return m.FindByID(ctx, id)
 }

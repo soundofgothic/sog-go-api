@@ -2,10 +2,9 @@ package postgres
 
 import (
 	"context"
-	"net/http"
+	"errors"
+	"fmt"
 
-	"github.com/enhanced-tools/errors"
-	"github.com/enhanced-tools/errors/opts"
 	"github.com/uptrace/bun"
 	"soundofgothic.pl/backend/internal/postgres/mods"
 )
@@ -28,20 +27,15 @@ func (c *commonRepository[T]) List(ctx context.Context, modifiers ...mods.QueryM
 		baseQuery = baseQuery.Apply(modifier)
 	}
 	count, err := baseQuery.ScanAndCount(ctx, &results)
-	return results, int64(count), errors.Enhance(err)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to list records: %w", err)
+	}
+	return results, int64(count), nil
 }
 
 var (
-	ErrMultipipleResults = errors.Template().With(
-		opts.Title("Multiple results"),
-		opts.StatusCode(http.StatusInternalServerError),
-		opts.Type("db"),
-	)
-	ErrResultNotFound = errors.Template().With(
-		opts.Title("Result not found"),
-		opts.StatusCode(http.StatusNotFound),
-		opts.Type("db"),
-	)
+	ErrMultipleResults = errors.New("multiple results found")
+	ErrResultNotFound  = errors.New("result not found")
 )
 
 func (c *commonRepository[T]) Get(ctx context.Context, modifiers ...mods.QueryModifier) (*T, error) {
@@ -50,15 +44,18 @@ func (c *commonRepository[T]) Get(ctx context.Context, modifiers ...mods.QueryMo
 		return nil, err
 	}
 	if len(results) > 1 {
-		return nil, ErrMultipipleResults.FromEmpty()
+		return nil, ErrMultipleResults
 	}
 	if len(results) == 0 {
-		return nil, ErrResultNotFound.FromEmpty()
+		return nil, ErrResultNotFound
 	}
 	return &results[0], nil
 }
 
 func (c *commonRepository[T]) Delete(ctx context.Context, id int64) error {
 	_, err := c.db.NewDelete().Model((*T)(nil)).Where("id = ?", id).Exec(ctx)
-	return errors.Enhance(err)
+	if err != nil {
+		return fmt.Errorf("failed to delete record: %w", err)
+	}
+	return nil
 }

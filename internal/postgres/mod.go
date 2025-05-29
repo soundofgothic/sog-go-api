@@ -2,8 +2,8 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/enhanced-tools/errors"
 	"github.com/uptrace/bun"
 	"soundofgothic.pl/backend/internal/domain"
 )
@@ -33,7 +33,10 @@ func (m *ModRepository) Persist(ctx context.Context, mod *domain.Mod) error {
 		Set("version = EXCLUDED.version").
 		Exec(ctx)
 
-	return errors.Enhance(err)
+	if err != nil {
+		return fmt.Errorf("failed to persist mod: %w", err)
+	}
+	return nil
 }
 
 func (m *ModRepository) List(ctx context.Context) ([]domain.Mod, error) {

@@ -28,7 +28,7 @@ type Recording struct {
 
 type RecordingSearchOptions struct {
 	IDs          []int64 `search:"type:in;columns:r.id;"`
-	Query        string  `search:"type:like;columns:r.transcript;"`
+	Query        string
 	Page         int64   `search:"type:page;"`
 	PageSize     int64   `search:"type:pageSize;"`
 	SourceFileID []int64 `search:"type:in;columns:r.source_file_id;"`

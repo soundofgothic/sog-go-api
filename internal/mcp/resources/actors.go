@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/enhanced-tools/errors"
 	"github.com/mark3labs/mcp-go/mcp"
 	"soundofgothic.pl/backend/internal/domain"
 )
@@ -32,14 +31,14 @@ func (a *ActorResource) Resource() mcp.Resource {
 func (a *ActorResource) Handler(ctx context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
 	voices, err := a.repositories.Voice().List(ctx, domain.VoiceOptions{})
 	if err != nil {
-		return nil, errors.Enhance(err)
+		return nil, fmt.Errorf("failed to list voices: %w", err)
 	}
 
 	contents := make([]mcp.ResourceContents, len(voices))
 	for i, voice := range voices {
 		text, err := json.Marshal(voice)
 		if err != nil {
-			return nil, errors.Enhance(err)
+			return nil, fmt.Errorf("failed to marshal voice %d: %w", voice.ID, err)
 		}
 
 		contents[i] = mcp.TextResourceContents{

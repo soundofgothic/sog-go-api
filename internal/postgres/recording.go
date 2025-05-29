@@ -24,12 +24,24 @@ func (g *postgresRepositoryStorage) Recording() domain.RecordingService {
 	return NewRecordingRepository(g.db)
 }
 
-func (rc *RecordingRepository) List(ctx context.Context, opts domain.RecordingSearchOptions) ([]domain.Recording, int64, error) {
-	return rc.commonRepository.List(ctx,
-		mods.WithRelations("Game", "NPC", "Guild", "Voice", "SourceFile"),
+func recordingOptsToMods(opts domain.RecordingSearchOptions) []mods.QueryModifier {
+	return []mods.QueryModifier{
 		mods.WithSearchOptions(opts),
+		mods.WithWhereGroup(" AND ",
+			mods.WithTextSearch("r.transcript", opts.Query),
+			mods.WithWhereGroup(" OR ", mods.WithFullTextSearch("r.search_vector", opts.Query)),
+		),
+	}
+}
+
+func (rc *RecordingRepository) List(ctx context.Context, opts domain.RecordingSearchOptions) ([]domain.Recording, int64, error) {
+	mods := append(
+		recordingOptsToMods(opts),
+		mods.WithRelations("Game", "NPC", "Guild", "Voice", "SourceFile"),
 		mods.WithOrderByIDsIn("r.id", opts.IDs),
 	)
+
+	return rc.commonRepository.List(ctx, mods...)
 }
 
 func (rc *RecordingRepository) Get(ctx context.Context, opts domain.RecordingGetOptions) (*domain.Recording, error) {

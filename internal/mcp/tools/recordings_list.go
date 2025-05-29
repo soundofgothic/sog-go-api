@@ -35,8 +35,8 @@ func (c *RecordingsList) Tool() mcp.Tool {
 			"type": "number",
 		}), mcp.Description("Filter recordings by a list of specific Recording IDs.")),
 		mcp.WithString("query", mcp.Description("Search term to filter recordings by their transcribed text."), mcp.DefaultString("")),
-		mcp.WithNumber("page", mcp.Description("Page number for pagination of results."), mcp.DefaultNumber(1)),
-		mcp.WithNumber("page_size", mcp.Description("Number of recordings to return per page."), mcp.DefaultNumber(50)),
+		mcp.WithNumber("page", mcp.Description("Page number for pagination of results."), mcp.DefaultNumber(1), mcp.Min(1)),
+		mcp.WithNumber("page_size", mcp.Description("Number of recordings to return per page."), mcp.DefaultNumber(20), mcp.Max(20)),
 		mcp.WithArray("source_file_id", mcp.Items(map[string]any{
 			"type": "number",
 		}), mcp.Description("Filter recordings by a list of Source File IDs they originate from.")),
@@ -59,7 +59,7 @@ type RecordingListParams struct {
 	IDs          []int64 `json:"ids"`
 	Query        string  `json:"query"`
 	Page         int64   `json:"page"`
-	PageSize     int64   `json:"page_size"`
+	PageSize     int64   `json:"page_size" validate:"max=20"`
 	SourceFileID []int64 `json:"source_file_id"`
 	GameIDs      []int64 `json:"game_ids"`
 	NPCIDs       []int64 `json:"npc_ids"`

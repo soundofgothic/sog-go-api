@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/enhanced-tools/errors"
 	"github.com/uptrace/bun/driver/pgdriver"
 
 	"github.com/uptrace/bun/dialect/pgdialect"
@@ -69,7 +68,7 @@ func NewPostgresRepositories(opts ...Option) (*postgresRepositoryStorage, error)
 		for err != nil {
 			select {
 			case <-ctx.Done():
-				return nil, errors.Enhance(err)
+				return nil, fmt.Errorf("failed to connect to database: %w", err)
 			default:
 				time.Sleep(1 * time.Second)
 				if err = db.PingContext(ctx); err == nil {

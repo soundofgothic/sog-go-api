@@ -33,7 +33,7 @@ func (re *restEnvironment) npcList(w http.ResponseWriter, r *http.Request) {
 		ScriptIDs: input.ScriptIDs.Values,
 	})
 	if err != nil {
-		rjson.HandleError(w, err)
+		rjson.InternalError(w, err)
 		return
 	}
 	rjson.RespondWithJSON(w, rjson.NewPagedResponse(rjson.PageOptions{Page: input.Page, PageSize: input.PageSize}, count, npcs))

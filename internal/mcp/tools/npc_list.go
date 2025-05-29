@@ -3,8 +3,8 @@ package tools
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
-	"github.com/enhanced-tools/errors"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/samber/lo"
 	"soundofgothic.pl/backend/internal/domain"
@@ -57,7 +57,7 @@ type NpcListParams struct {
 func (c *NpcList) Handler(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	params, err := MapTo[NpcListParams](request.Params.Arguments)
 	if err != nil {
-		return nil, errors.Enhance(err)
+		return nil, fmt.Errorf("failed to map request parameters: %w", err)
 	}
 
 	npcs, total, err := c.Repositories.NPC().List(ctx, domain.NPCSearchOptions{
@@ -70,7 +70,7 @@ func (c *NpcList) Handler(ctx context.Context, request mcp.CallToolRequest) (*mc
 		IDs:       params.Ids,
 	})
 	if err != nil {
-		return nil, errors.Enhance(err)
+		return nil, fmt.Errorf("failed to list NPCs: %w", err)
 	}
 
 	npcsString, err := json.Marshal(map[string]any{
@@ -78,7 +78,7 @@ func (c *NpcList) Handler(ctx context.Context, request mcp.CallToolRequest) (*mc
 		"npcs":  npcs,
 	})
 	if err != nil {
-		return nil, errors.Enhance(err)
+		return nil, fmt.Errorf("failed to marshal NPCs: %w", err)
 	}
 
 	return mcp.NewToolResultText(string(npcsString)), nil

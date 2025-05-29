@@ -32,7 +32,7 @@ func (re *restEnvironment) recordingsList(w http.ResponseWriter, r *http.Request
 		GuildIDs:     input.GuildID,
 	})
 	if err != nil {
-		rjson.HandleError(w, err)
+		rjson.InternalError(w, err)
 		return
 	}
 	rjson.RespondWithJSON(w, rjson.NewPagedResponse(rjson.PageOptions{Page: input.Page, PageSize: input.PageSize}, total, recordings))
@@ -50,7 +50,7 @@ func (re *restEnvironment) recordingsGet(w http.ResponseWriter, r *http.Request)
 		Wave:   input.Wave,
 	})
 	if err != nil {
-		rjson.HandleError(w, err)
+		rjson.InternalError(w, err)
 		return
 	}
 	rjson.RespondWithJSON(w, record)

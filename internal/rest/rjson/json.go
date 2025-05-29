@@ -2,24 +2,20 @@ package rjson
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 
 	"github.com/enhanced-tools/errors"
-	"github.com/enhanced-tools/errors/opts"
 )
 
-func HandleError(w http.ResponseWriter, err error) {
-	enErr := errors.Enhance(err)
-	errors.Enhance(err).Log("rest")
-	var statusCode opts.StatusCode = 500
-	enErr.GetOpt(&statusCode)
-	jsonData := errors.AsJSON(errors.Enhance(err))
+func InternalError(w http.ResponseWriter, err error) {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(int(statusCode))
-	if err := json.NewEncoder(w).Encode(jsonData); err != nil {
-		errors.Enhance(err).Log("rest")
-		return
-	}
+	w.WriteHeader(http.StatusInternalServerError)
+	json.NewEncoder(w).Encode(map[string]string{
+		"internal_error": "An internal error occurred. Please try again later.",
+	})
+
+	slog.Error("Internal server error", "error", err)
 }
 
 func RespondWithJSON(w http.ResponseWriter, data any, statusCode ...int) {
@@ -31,7 +27,7 @@ func RespondWithJSON(w http.ResponseWriter, data any, statusCode ...int) {
 	w.WriteHeader(http.StatusOK)
 	err := json.NewEncoder(w).Encode(data)
 	if err != nil {
-		HandleError(w, errors.Enhance(err))
+		InternalError(w, errors.Enhance(err))
 		return
 	}
 }

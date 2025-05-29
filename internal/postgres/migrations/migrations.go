@@ -3,8 +3,8 @@ package migrations
 import (
 	"context"
 	"embed"
+	"fmt"
 
-	"github.com/enhanced-tools/errors"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/migrate"
 )
@@ -21,16 +21,16 @@ func Migrate(ctx context.Context, p DBProvider) error {
 
 	migrations := migrate.NewMigrations()
 	if err := migrations.Discover(sqlMigrations); err != nil {
-		return errors.Enhance(err)
+		return fmt.Errorf("failed to discover migrations: %w", err)
 	}
 
 	migrator := migrate.NewMigrator(db, migrations)
 	if err := migrator.Init(ctx); err != nil {
-		return errors.Enhance(err)
+		return fmt.Errorf("failed to initialize migrator: %w", err)
 	}
 
 	if _, err := migrator.Migrate(ctx); err != nil {
-		return errors.Enhance(err)
+		return fmt.Errorf("failed to run migrations: %w", err)
 	}
 
 	return nil

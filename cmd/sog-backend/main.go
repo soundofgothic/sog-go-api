@@ -3,10 +3,10 @@ package main
 import (
 	"flag"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 
-	"github.com/enhanced-tools/errors"
 	"github.com/go-chi/chi/v5"
 
 	"soundofgothic.pl/backend/internal/config"
@@ -23,15 +23,10 @@ func run() int {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	cfg, err := config.LoadConfigFromFile(configPath)
 	if err != nil {
-		errors.Enhance(err).Log()
+		slog.Error("failed to load config", "error", err)
 		return 1
 	}
 
-	errors.Manager().SetDefaultLogger(errors.CustomLogger(
-		errors.WithErrorFormatter(errors.MultilineFormatter),
-		errors.WithSaveStack(true),
-		errors.WithStackTraceFormatter(errors.MultilineStackTraceFormatter),
-	))
 	r := chi.NewRouter()
 	repositories, err := postgres.NewPostgresRepositories(postgres.WithAuth(
 		postgres.DBAuth{
@@ -43,13 +38,13 @@ func run() int {
 		},
 	))
 	if err != nil {
-		errors.Enhance(err).Log()
+		slog.Error("failed to connect to Postgres", "error", err)
 		return 1
 	}
 	rest.RegisterBackendEndpoints(r, repositories)
 	log.Printf("Listening on %s", cfg.Address)
 	if err := http.ListenAndServe(cfg.Address, r); err != nil {
-		errors.Enhance(err).Log()
+		slog.Error("failed to start server", "address", cfg.Address, "error", err)
 		return 1
 	}
 	return 0

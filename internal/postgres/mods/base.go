@@ -21,6 +21,12 @@ func WithTextSearch(column string, query string) QueryModifier {
 	}
 }
 
+func WithFullTextSearch(column string, query string) QueryModifier {
+	return func(q *bun.SelectQuery) *bun.SelectQuery {
+		return q.Where(fmt.Sprintf("%s @@ plainto_tsquery('pl_ispell', ?)", column), query)
+	}
+}
+
 func WithRelations(relations ...string) QueryModifier {
 	return func(q *bun.SelectQuery) *bun.SelectQuery {
 		for _, relation := range relations {

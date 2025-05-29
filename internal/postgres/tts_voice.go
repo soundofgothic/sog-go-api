@@ -2,8 +2,8 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/enhanced-tools/errors"
 	"github.com/uptrace/bun"
 	"soundofgothic.pl/backend/internal/domain"
 )
@@ -31,7 +31,10 @@ func (v *TTSVoiceRepository) Persist(ctx context.Context, voice *domain.TTSVoice
 		Set("name = EXCLUDED.name").
 		Exec(ctx)
 
-	return errors.Enhance(err)
+	if err != nil {
+		return fmt.Errorf("failed to persist TTS voice: %w", err)
+	}
+	return nil
 }
 
 func (v *TTSVoiceRepository) List(ctx context.Context) ([]domain.TTSVoice, error) {

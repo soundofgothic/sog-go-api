@@ -135,6 +135,15 @@ func TestAlternativeRepository_List(t *testing.T) {
 			expected: 1,
 		},
 		{
+			name: "list with string query on recording transcript - one, but with full text",
+			options: domain.AlternativeOptions{
+				RecordingSearchOptions: domain.RecordingSearchOptions{
+					Query: "został członek",
+				},
+			},
+			expected: 1,
+		},
+		{
 			name: "list with string query on alternative transcript - one",
 			options: domain.AlternativeOptions{
 				Query: "Test Transcript 2",
